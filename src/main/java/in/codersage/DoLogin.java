@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -15,50 +16,48 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class DoVerification
+ * Servlet implementation class DoLogin
  */
-@WebServlet("/DoVerification")
-public class DoVerification extends HttpServlet {
+@WebServlet("/DoLogin")
+public class DoLogin extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public DoVerification() {
+    public DoLogin() {
         super();
         // TODO Auto-generated constructor stub
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
-		String email = request.getParameter("email");
-		String token = request.getParameter("token");
 		
+		String email = request.getParameter("email");
+		String psw = request.getParameter("psw");
 		
 		try {
 			//Class.forName("com.mysql.cj.jdbc.Driver");
 			//Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/temp", "root", "root");
 			Connection conn = (Connection) getServletContext().getAttribute("DB_CONN");
-			Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stmt.executeQuery("select * from login where username='" + email+"' and token='"+token+"'");
-			if(rs.next()) {
-				rs.updateBoolean("activated", true);
-				rs.updateRow();
-				out.print("Your account is activated. You can login to the system!!!!");
-			} else {
-				out.print("Invalid link!!!");
-			}
+			PreparedStatement preStmt = conn.prepareStatement("select * from login where username=? and password=?");
+			//Statement stmt = conn.createStatement();
+			preStmt.setString(1,email);
+			preStmt.setString(2, psw);
 			
+			ResultSet rs = preStmt.executeQuery();
+			//ResultSet rs = stmt.executeQuery("select * from login where username='" + email + "' and password='"+psw+"'");
+			
+			if(rs.next()) {
+				out.print("Successfully logged in!!!");
+			} else {
+				out.print("Invalid credentials!!!");
+			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-	}
-
-	
+		}
 
 }

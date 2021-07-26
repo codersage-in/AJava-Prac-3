@@ -160,7 +160,7 @@ to {
 			<div class="container">
 				<label for="uname"><b>Email</b></label> <input type="email"
 					placeholder="Enter email" name="email" value=<%=email%> required>
-				<label for="psw"><b>Password</b></label> <input type="password"
+				<label for="psw"><b>Password</b></label> <input type="text"
 					placeholder="Enter Password" name="psw" value=<%=password%>
 					required>
 

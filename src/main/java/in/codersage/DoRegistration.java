@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
@@ -17,6 +18,7 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -51,20 +53,30 @@ public class DoRegistration extends HttpServlet {
 
 			// Initialise driver (Type 4)/class
 
-			Class.forName("com.mysql.cj.jdbc.Driver");
+			//Class.forName("com.mysql.cj.jdbc.Driver");
 
 			// Making connection to the database
 
-			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/temp", "root", "root");
-
-			// Open the statement to execute the sql
-			Statement stmt = conn.createStatement();
-
-			// execute the sql
-
+			//Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/temp", "root", "root");
 			
-			  int count = stmt .executeUpdate("insert into login (username, password,activated,token) values ('" + email + "','"
-			  + psw + "',false,'" + token + "')");
+			ServletContext sc = getServletContext();
+
+			Connection conn = (Connection) sc.getAttribute("DB_CONN");
+			
+			
+			// Open the statement to execute the sql
+			PreparedStatement preStmt = conn.prepareStatement("insert into login (username, password,activated,token) values (?,?,?,?)");
+			//Statement stmt = conn.createStatement();
+
+			preStmt.setString(1, email);
+			preStmt.setString(2, psw);
+			preStmt.setBoolean(3, false);
+			preStmt.setString(4, token);
+			
+			// execute the sql
+					
+			
+			  int count = preStmt.executeUpdate();
 			 
 			
 			
@@ -106,10 +118,10 @@ public class DoRegistration extends HttpServlet {
 				System.out.println("Registration not done!!!");
 			}
 
-			stmt.close();
-			conn.close();
+			//stmt.close();
+			//conn.close();
 
-		} catch (ClassNotFoundException | SQLException | MessagingException e) {
+		} catch ( SQLException | MessagingException e) {
 			
 			e.printStackTrace();
 		}
