@@ -19,12 +19,12 @@ import javax.servlet.http.HttpServletResponse;
 @WebFilter("/*")
 public class AutoLogin implements Filter {
 
-    /**
-     * Default constructor. 
-     */
-    public AutoLogin() {
-        // TODO Auto-generated constructor stub
-    }
+	/**
+	 * Default constructor.
+	 */
+	public AutoLogin() {
+		// TODO Auto-generated constructor stub
+	}
 
 	/**
 	 * @see Filter#destroy()
@@ -36,33 +36,35 @@ public class AutoLogin implements Filter {
 	/**
 	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
 	 */
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
 		// TODO Auto-generated method stub
-		
+
 		String email = null, psw = null;
-		
+
 		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 		HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-		
-		Cookie cookies[] = httpServletRequest.getCookies();
-		if(cookies != null)
-		for(Cookie cookie:cookies) {
-			if(cookie.getName().equals("email")) {
-				email = cookie.getValue();
-			} else if (cookie.getName().equals("psw")){
-				psw = cookie.getValue();
-				RequestDispatcher rd =
-						  request.getRequestDispatcher("DoLogin?email="+email+"&psw="+psw);
-						  rd.forward(request,response);
-			}
 
+		Cookie cookies[] = httpServletRequest.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals("email")) {
+					email = cookie.getValue();
+				} else if (cookie.getName().equals("psw")) {
+					psw = cookie.getValue();
+					RequestDispatcher rd = request.getRequestDispatcher("DoLogin?email=" + email + "&psw=" + psw);
+					rd.forward(request, response);
+				}
+			}
+			if (email == null || psw == null) {
+				// pass the request along the filter chain
+				chain.doFilter(request, response);
+			}
 		} else {
 			// pass the request along the filter chain
 			chain.doFilter(request, response);
 		}
-		
 
-		
 	}
 
 	/**
