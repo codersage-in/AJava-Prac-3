@@ -9,4 +9,4 @@ wget https://mirrors.estointernet.in/apache/tomcat/tomcat-9/v9.0.50/bin/apache-t
 
 sudo /usr/share/tomcat/bin/catalina.sh start
 
-wget https://downloads.mysql.com/archives/get/p/23/file/mysql-community-server-8.0.25-1.el8.x86_64.rpm
+wget https://dev.mysql.com/get/mysql80-community-release-el8-1.noarch.rpm
